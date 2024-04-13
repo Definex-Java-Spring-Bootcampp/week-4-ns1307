@@ -3,7 +3,7 @@ version: '3.1'
 services:
   mysql:
     image: mysql:5.7
-    container_name: mysql_akbank_database
+    container_name: akbank_database_container
     environment:
       MYSQL_DATABASE: 'akbank-database'
       MYSQL_ROOT_PASSWORD: 'password'  # Burada güvenli bir şifre kullanmalısınız

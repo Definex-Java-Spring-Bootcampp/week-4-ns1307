@@ -54,7 +54,7 @@ public class UserController {
         if (user1 != null) {
             return ResponseEntity.ok().body(user1);
         }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.unprocessableEntity().build();
     }
 
 

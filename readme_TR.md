@@ -2,7 +2,8 @@
 
 ## Proje Açıklaması
 
-Bu proje, kredi sektöründe faaliyet gösteren bankalar arasında ortak bir veritabanını kullanarak, müşteri bilgilerini çekmek ve kredi kartı veya kredi başvurularını işlemek amacıyla geliştirilmiştir. Merkezi bir veritabanı ve Akbank gibi servisler aracılığıyla bankalar, müşteri bilgilerine erişebilir ve başvuruları işleyebilirler. Proje, gateway üzerinden yönlendirme yapar, arka planda API'ler aracılığıyla iletişim kurar ve MySQL veritabanını kullanır. "kredinbizde-service" ve "akbank-service" için gerekli olan unit testler başarıyla çalışmaktadır.
+Bu proje, kredi sektöründe faaliyet gösteren bankalar arasında ortak bir veritabanını kullanarak, müşteri bilgilerini çekmek ve kredi kartı veya kredi başvurularını işlemek amacıyla geliştirilmiştir. Merkezi bir veritabanı ve Akbank gibi servisler aracılığıyla bankalar, müşteri bilgilerine erişebilir ve başvuruları işleyebilirler. Proje, gateway üzerinden yönlendirme yapar, arka planda API'ler aracılığıyla iletişim kurar ve MySQL veritabanını kullanır. Projede örnek olması açısından yapılan her işlem RabbitMQ aracılığıyla log bilgilerini notification-service'e iletmek ve bir veritabanında bu bilgileri saklamak için kullanılmıştır. Bu sebeple sorgular biraz zaman almaktadır. Dilerseniz bu satırları comment satırına alıp, daha hızlı sorgular gerçekleştirebilirsiniz. "kredinbizde-service" ve "akbank-service" için gerekli olan unit testler başarıyla çalışmaktadır.
+
 
 ### Projeyi Çalıştırma Adımları
 

@@ -5,7 +5,12 @@ import com.patika.akbankservice.enums.CardType;
 import com.patika.akbankservice.exceptions.akbankServiceException;
 import com.patika.akbankservice.model.CreditCard;
 import com.patika.akbankservice.model.User;
+import com.patika.akbankservice.producer.NotificationProducer;
+import com.patika.akbankservice.producer.dto.NotificationDTO;
+import com.patika.akbankservice.producer.enums.LogType;
+import com.patika.akbankservice.producer.enums.SuccessType;
 import com.patika.akbankservice.repository.CreditCardRepository;
+import com.patika.akbankservice.service.constants.BankConstants;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -36,6 +41,9 @@ class CreditCardServiceTest {
 
     @Mock
     CreditCardRepository creditCardRepository;
+
+    @Mock
+    private NotificationProducer notificationProducer;
 
     static User userNotCustomer;
     static User userCustomer;
@@ -89,7 +97,9 @@ class CreditCardServiceTest {
     @Test
     void should_return_allCreditCardApplicationsByEmail_successfully(){//getCreditCardApplicationsByEmail
         Mockito.when(creditCardRepository.findCreditCardsByUserID(String.valueOf(userCustomer.getId()))).thenReturn(prepareCreditCardList().stream().filter(creditCard -> creditCard.getUserID().equals(String.valueOf(userCustomer.getId()))).toList());
-
+        Mockito.when(notificationProducer.prepareNotificationDTO(LogType.READ, SuccessType.SUCCESS, "credit-cards", "Read all credit-card applications of user with userID:" +userCustomer.getId()+" for bankID:"+ BankConstants.bankID)).thenReturn(
+                new NotificationDTO()
+        );
         //when
         List<CreditCard> returnCreditCards = creditCardService.getCreditCardApplicationsByEmail(String.valueOf(userCustomer.getEmail()));
         //then
@@ -106,7 +116,7 @@ class CreditCardServiceTest {
 
 
         verify(creditCardRepository,times(1)).findCreditCardsByUserID(String.valueOf(userCustomer.getId()));
-
+        verify(notificationProducer,times(1)).sendNotification(Mockito.any(NotificationDTO.class));
     }
     @Test
     void should_throw_exception_when_userNotFound_in_allCreditCardApplicationsByEmail(){//getCreditCardApplicationsByEmail

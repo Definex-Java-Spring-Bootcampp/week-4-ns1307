@@ -2,7 +2,7 @@
 
 ## Project Description
 
-This project is developed to facilitate banks operating in the credit sector to retrieve customer information and process credit card or loan applications using a shared database among banks. Through a centralized database and services like Akbank, banks can access customer information and process applications. The project performs routing via a gateway, communicates with other projects via APIs in the background, and utilizes MySQL as the database. Unit tests for "kredinbizde-service" and "akbank-service" are successfully executed.
+This project is developed to facilitate banks operating in the credit sector to retrieve customer information and process credit card or loan applications using a shared database among banks. Through a centralized database and services like Akbank, banks can access customer information and process applications. The project performs routing via a gateway, communicates with other projects via APIs in the background, and utilizes MySQL as the database. As an example for usage of RabbitMQ, every query made in the project saved as log information to the notification-service via RabbitMQ and store this information in a database. For this reason, queries take some time. If you wish, you can put these lines in the comment line and perform faster queries.Unit tests for "kredinbizde-service" and "akbank-service" are successfully executed.
 
 ### Running the Project
 

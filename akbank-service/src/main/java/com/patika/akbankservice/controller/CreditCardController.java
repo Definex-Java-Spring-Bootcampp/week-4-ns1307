@@ -1,6 +1,7 @@
 package com.patika.akbankservice.controller;
 
 import com.patika.akbankservice.model.CreditCard;
+import com.patika.akbankservice.producer.NotificationProducer;
 import com.patika.akbankservice.service.CreditCardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ public class CreditCardController {
 
     private final CreditCardService creditCardService;
 
+    private final NotificationProducer notificationProducer;
 
     @PostMapping("/{email}")
     public CreditCard createCreditCardApplication(@PathVariable String email, @RequestBody CreditCard creditCard) {

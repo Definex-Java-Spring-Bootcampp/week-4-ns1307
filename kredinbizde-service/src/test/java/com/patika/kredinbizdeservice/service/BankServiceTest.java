@@ -4,6 +4,10 @@ import com.patika.kredinbizdeservice.exceptions.KredinbizdeException;
 import com.patika.kredinbizdeservice.model.Address;
 import com.patika.kredinbizdeservice.model.Bank;
 import com.patika.kredinbizdeservice.model.User;
+import com.patika.kredinbizdeservice.producer.NotificationProducer;
+import com.patika.kredinbizdeservice.producer.dto.NotificationDTO;
+import com.patika.kredinbizdeservice.producer.enums.LogType;
+import com.patika.kredinbizdeservice.producer.enums.SuccessType;
 import com.patika.kredinbizdeservice.repository.BankRepository;
 import com.patika.kredinbizdeservice.repository.UserRepository;
 import org.junit.jupiter.api.Assertions;
@@ -36,6 +40,9 @@ class BankServiceTest {
     @Mock
     private UserRepository userRepository;
 
+    @Mock
+    private NotificationProducer notificationProducer;
+
     @Test
     void should_create_bank_successfully() {
         //given
@@ -57,6 +64,20 @@ class BankServiceTest {
         assertThat(bankResponse.getCustomers().get(1).getEmail()).isEqualTo(prepareBank().getCustomers().get(1).getEmail());
 
         verify(bankRepository, times(1)).save(Mockito.any(Bank.class));
+
+    }
+
+    @Test
+    void should_throw_kredinBizdeException_when_bank_could_not_created() {
+        //given
+        Mockito.when(bankRepository.save(Mockito.any(Bank.class))).thenThrow(KredinbizdeException.class);
+
+        //when
+        Throwable throwable = catchThrowable(() -> bankService.save(prepareBank()));
+
+        //then
+        assertThat(throwable).isInstanceOf(KredinbizdeException.class);
+        assertThat(throwable.getMessage()).isEqualTo("Bank could not be created.");
 
     }
 
@@ -95,7 +116,7 @@ class BankServiceTest {
         //given
 
         //when
-        User returnUser = bankService.findUserinCustomers(prepareCustomerList(), prepareCustomerList().get(1).getId());
+        User returnUser = bankService.findUserinCustomers(prepareBank(), prepareCustomerList().get(1).getId());
 
         //then
         assertThat(returnUser).isNotNull();
@@ -108,7 +129,7 @@ class BankServiceTest {
 
     @Test
     void should_throw_exception_when_userNotFound_in_customers() {//findUserinCustomers
-        Throwable throwable = catchThrowable(() -> bankService.findUserinCustomers(prepareCustomerList(), 5L));
+        Throwable throwable = catchThrowable(() -> bankService.findUserinCustomers(prepareBank(), 5L));
         assertThat(throwable).isInstanceOf(KredinbizdeException.class);
         assertThat(throwable.getMessage()).isEqualTo("This user is not customer of this bank.");
     }
@@ -174,7 +195,9 @@ class BankServiceTest {
         //given
         Mockito.when(bankRepository.findById(0L)).thenReturn(Optional.of(prepareBank()));
         Mockito.when(userRepository.findByEmail("TESTUSER1@gmail.com")).thenReturn(Optional.of(prepareUserCustomer()));
-
+        Mockito.when(notificationProducer.prepareNotificationDTO(LogType.UPDATE, SuccessType.FAIL, "banks", "New customer attempted to add but user is already a customer for bankID:0 with email:" + prepareUserCustomer().getEmail())).thenReturn(
+                new NotificationDTO()
+        );
 
         //when
         Bank returnBank = bankService.addCustomer(0L, "TESTUSER1@gmail.com");

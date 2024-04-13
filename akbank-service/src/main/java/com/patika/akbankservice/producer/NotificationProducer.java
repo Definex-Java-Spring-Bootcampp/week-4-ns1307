@@ -1,9 +1,9 @@
-package com.patika.kredinbizdeservice.producer;
+package com.patika.akbankservice.producer;
 
-import com.patika.kredinbizdeservice.configuration.RabbitMQConfiguration;
-import com.patika.kredinbizdeservice.producer.dto.NotificationDTO;
-import com.patika.kredinbizdeservice.producer.enums.LogType;
-import com.patika.kredinbizdeservice.producer.enums.SuccessType;
+import com.patika.akbankservice.configuration.RabbitMQConfiguration;
+import com.patika.akbankservice.producer.dto.NotificationDTO;
+import com.patika.akbankservice.producer.enums.LogType;
+import com.patika.akbankservice.producer.enums.SuccessType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.AmqpTemplate;

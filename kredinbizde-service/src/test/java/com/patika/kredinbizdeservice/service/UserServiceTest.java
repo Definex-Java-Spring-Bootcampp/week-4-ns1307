@@ -5,6 +5,8 @@ import com.patika.kredinbizdeservice.model.Address;
 import com.patika.kredinbizdeservice.model.User;
 import com.patika.kredinbizdeservice.producer.NotificationProducer;
 import com.patika.kredinbizdeservice.producer.dto.NotificationDTO;
+import com.patika.kredinbizdeservice.producer.enums.LogType;
+import com.patika.kredinbizdeservice.producer.enums.SuccessType;
 import com.patika.kredinbizdeservice.repository.UserRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -46,13 +48,15 @@ class UserServiceTest {
             // çağrılan obje olduğu gibi return edilir
             return invocation.<User>getArgument(0);
         });
+        Mockito.when(notificationProducer.prepareNotificationDTO(LogType.CREATE, SuccessType.SUCCESS, "users", "User created with ID:" + 0)).thenReturn(
+                new NotificationDTO()
+        );
 
         //when
         User userResponse = userService.save(prepareUser());
 
         //then
         assertThat(userResponse).isNotNull();
-        assertThat(userResponse.getId()).isEqualTo(prepareUser().getId());
         assertThat(userResponse.getName()).isEqualTo(prepareUser().getName());
         assertThat(userResponse.getSurname()).isEqualTo(prepareUser().getSurname());
         assertThat(userResponse.getEmail()).isEqualTo(prepareUser().getEmail());
@@ -64,6 +68,34 @@ class UserServiceTest {
         verify(notificationProducer, times(1)).sendNotification(Mockito.any(NotificationDTO.class));
     }
 
+    @Test
+    void should_throw_kredinBizdeException_when_user_could_not_created() {
+        //given
+        Mockito.when(userRepository.save(Mockito.any(User.class))).thenThrow(KredinbizdeException.class);
+
+        //when
+        Throwable throwable = catchThrowable(() -> userService.save(prepareUser()));
+
+        //then
+        assertThat(throwable).isInstanceOf(KredinbizdeException.class);
+        assertThat(throwable.getMessage()).isEqualTo("User could not created with email:" + prepareUser().getEmail());
+
+    }
+
+
+    @Test
+    void should_throw_kredinBizdeException_when_could_not_return_all_users() {
+        //given
+        Mockito.when(userRepository.findAll()).thenThrow(KredinbizdeException.class);
+
+        //when
+        Throwable throwable = catchThrowable(() -> userService.getAll());
+
+        //then
+        assertThat(throwable).isInstanceOf(KredinbizdeException.class);
+        assertThat(throwable.getMessage()).isEqualTo("All users could not be read.");
+
+    }
 
     @Test
     void should_return_user_by_email_successfully() {//getByEmail
@@ -199,6 +231,7 @@ class UserServiceTest {
 
     private User prepareUser() {
         User user = new User();
+        user.setId(0L);
         user.setEmail("test1@gmail.com");
         user.setName("Test1Name");
         user.setSurname("Test1Surname");

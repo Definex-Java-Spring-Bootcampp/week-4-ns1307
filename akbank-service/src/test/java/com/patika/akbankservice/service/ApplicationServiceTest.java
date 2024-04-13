@@ -51,6 +51,13 @@ class ApplicationServiceTest {
         addUserToCustomers(userCustomer);
 
     }
+    @AfterAll
+    public static void cleanUp() {
+        //first remove from customers, because it is connected with foreign key in database.
+        removeCustomer(userNotCustomer.getEmail());
+        deleteUser(userCustomer.getEmail());
+        deleteUser(userNotCustomer.getEmail());
+    }
     //-------SUCCESSFUL TESTS------------
     @Test
     void should_find_user_by_email_successfully() {
@@ -223,13 +230,7 @@ class ApplicationServiceTest {
                 .bodyToMono(Bank.class).block();
     }
 
-    @AfterAll
-    public static void cleanUp() {
-        //first remove from customers, because it is connected with foreign key in database.
-        removeCustomer(userNotCustomer.getEmail());
-        deleteUser(userCustomer.getEmail());
-        deleteUser(userNotCustomer.getEmail());
-    }
+
 
     public static void removeCustomer(String email) {
         WebClient.builder().baseUrl("http://localhost:8084").build().delete() // GET isteği
@@ -238,7 +239,7 @@ class ApplicationServiceTest {
                 .onStatus(status -> status.value() == 404, response ->
                         response.bodyToMono(akbankServiceException.class)
                                 .flatMap(errorResponse ->
-                                        Mono.error(new akbankServiceException("Customer doesn't exist for this bank."))))
+                                        Mono.error(new akbankServiceException("Customer doesn't exist for this bank.User:"+email))))
                 .bodyToMono(Bank.class).block();
     }
     public static void deleteUser(String email) {
@@ -248,7 +249,7 @@ class ApplicationServiceTest {
                 .onStatus(status -> status.value() == 404, response ->
                         response.bodyToMono(akbankServiceException.class)
                                 .flatMap(errorResponse ->
-                                        Mono.error(new akbankServiceException("Customer doesn't exist for this bank."))))
+                                        Mono.error(new akbankServiceException("User does not exist:"+email))))
                 .bodyToMono(Bank.class).block();
     }
 

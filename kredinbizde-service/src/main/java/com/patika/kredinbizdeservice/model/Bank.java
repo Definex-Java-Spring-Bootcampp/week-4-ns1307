@@ -1,7 +1,6 @@
 package com.patika.kredinbizdeservice.model;
 
 import com.patika.kredinbizdeservice.model.constant.BankEntityColumnConstants;
-import com.patika.kredinbizdeservice.model.constant.UserEntityColumnConstants;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,6 +8,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,12 +19,18 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 @Table(name = "banks")
-public class Bank extends Audit implements Serializable {
+public class Bank implements Serializable {
 
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "create_time")
+    private LocalDateTime createTime;
+
+    @Column(name = "update_time")
+    private LocalDateTime updateTime;
 
     @Column(name = BankEntityColumnConstants.NAME, unique = false, nullable = false)
     private String name;

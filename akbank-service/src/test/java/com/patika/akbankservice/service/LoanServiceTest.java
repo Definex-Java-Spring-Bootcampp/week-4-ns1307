@@ -5,7 +5,12 @@ import com.patika.akbankservice.enums.LoanType;
 import com.patika.akbankservice.exceptions.akbankServiceException;
 import com.patika.akbankservice.model.Loan;
 import com.patika.akbankservice.model.User;
+import com.patika.akbankservice.producer.NotificationProducer;
+import com.patika.akbankservice.producer.dto.NotificationDTO;
+import com.patika.akbankservice.producer.enums.LogType;
+import com.patika.akbankservice.producer.enums.SuccessType;
 import com.patika.akbankservice.repository.LoanRepository;
+import com.patika.akbankservice.service.constants.BankConstants;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -33,6 +38,9 @@ class LoanServiceTest {
 
     @Mock
     LoanRepository loanRepo;
+
+    @Mock
+    private NotificationProducer notificationProducer;
 
     static User userNotCustomer;
     static User userCustomer;
@@ -85,7 +93,9 @@ class LoanServiceTest {
     @Test
     void should_return_allLoanApplicationsByEmail_successfully(){//getLoanApplicationsByEmail
         Mockito.when(loanRepo.findLoansByUserID(String.valueOf(userCustomer.getId()))).thenReturn(prepareLoanList().stream().filter(loan -> loan.getUserID().equals(String.valueOf(userCustomer.getId()))).toList());
-
+        Mockito.when(notificationProducer.prepareNotificationDTO(LogType.READ, SuccessType.SUCCESS, "loans", "Read all loan applications of user with userID:" +userCustomer.getId()+" for bankID:"+ BankConstants.bankID)).thenReturn(
+                new NotificationDTO()
+        );
         //when
         List<Loan> returnAllLoans = loanService.getLoanApplicationsByEmail(String.valueOf(userCustomer.getEmail()));
         //then
