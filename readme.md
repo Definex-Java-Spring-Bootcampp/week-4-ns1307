@@ -2,19 +2,28 @@
 
 ## Project Description
 
-This project is developed to facilitate banks operating in the credit sector to retrieve customer information and process credit card or loan applications using a shared database among banks. Through a centralized database and services like Akbank, banks can access customer information and process applications. The project performs routing via a gateway, communicates with other projects via APIs in the background, and utilizes MySQL as the database. As an example for usage of RabbitMQ, every query made in the project saved as log information to the notification-service via RabbitMQ and store this information in a database. For this reason, queries take some time. If you wish, you can put these lines in the comment line and perform faster queries.Unit tests for "kredinbizde-service" and "akbank-service" are successfully executed.
+This project is developed to fetch customer information and process credit card or loan applications using a common database among banks operating in the credit sector. Through a central database and services like Akbank, banks can access customer information and process applications. The project routes through a gateway, communicates in the background via APIs, and utilizes MySQL database. As an example of RabbitMQ usage, every transaction in the database sends log information via RabbitMQ to the notification-service, which then stores this information in a MySQL database. Therefore, queries may take some time. You can comment out these lines to perform faster queries. All necessary unit tests in the service layer for "kredinbizde-service" and "akbank-service" run successfully.
 
 ### Running the Project
 
-1. Run the docker-compose files in the "kredinbizde-service" and "akbank-service" directories to set up the necessary database and services.
-2. Initially, run the Eureka server in the "kredinbizde-discovery" project.
-3. Start the "kredinbizde-gw" (gateway) project.
-4. Start the "kredinbizde-service" project, make sure databases and required services are ready.
+1. Run the docker-compose files in the directories "kredinbizde-service", "akbank-service", and "notification-service" to set up the necessary database and services.
+2. First, run "kredinbizde-discovery" project.(Eureka server)
+3. Run the "kredinbizde-gw" (gateway) project.
+4. Run the "kredinbizde-service" project. Make sure that the databases and necessary services are ready and running.
 5. Run the "akbank-service" project.
-6. Optionally, run the "notification-service". (Notification service is a consumer project that receives messages from rabbitMQ.)
-7. If the projects run smoothly, you can perform queries using sample Postman requests contained in a JSON file that you can import into Postman.
+6. Run the "notification-service" project. This service consumes log messages from RabbitMQ and stores them in the MySQL database.
+7. If the projects are running smoothly, you can execute your queries by importing the sample queries from the "postman_queries.json" file into Postman.
 
-#### Notes
+#### Tasks
 
-- To ensure the correct functioning of queries in "akbank-service", the ID of Akbank in the "banks" table in the "kredinbizde" database needs to be manually configured in the "akbank-service" project. The default ID value is 2. So, if the ID of Akbank is not 2 in the database, queries may not work correctly or errors may occur.
-- The "delete user" feature is added solely for the deletion of objects created for unit tests in the akbank-service. In any application, especially in critical and live projects, instead of directly deleting from the database, it would be more appropriate to maintain an "active" boolean flag and update it accordingly.
+- "kredinbizde-discovery" is the project where the Eureka server is located.
+- "kredinbizde-gw" is the Gateway project that facilitates communication between projects and handles routing.
+- "akbank-service" is the service used to apply for and query credit card and loan applications. To apply on for a user, that user must be a customer of the that bank.
+- "kredinbizde-service" is the main project where user and bank information is stored and managed in the MySQL database.
+- "notification-service" is a service that consumes log messages via RabbitMQ and stores them in a MySQL database.
+
+##### Notes
+
+- For the queries in "akbank-service" to work correctly, the ID of Akbank in the "banks" table in the "kredinbizde" database needs to be manually set in the 
+"akbank-service" project. The default ID value is 2. So, if the ID of Akbank is not 2 in the database, queries may not work correctly or you may encounter errors.
+- The delete user feature is added only for deleting objects created for unit tests in akbank-service. Instead of deleting from the database, especially for important and live projects, it would be more appropriate to maintain an active boolean and change it.
