@@ -3,7 +3,7 @@ version: '3.1'
 services:
   mysql:
     image: mysql:5.7
-    container_name: log_records_container
+    container_name: log_records_database_container
     restart: always
     environment:
       MYSQL_DATABASE: 'log-records'
